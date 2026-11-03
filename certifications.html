@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Certifications — Portfolio BTS SIO SISR</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡️</text></svg>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="nav">
+    <div class="container nav-inner">
+      <a href="index.html" class="logo" id="logo"></a>
+      <a href="index.html" class="back-link">← Retour au portfolio</a>
+      <button class="theme-btn" aria-label="Changer de thème" title="Clair / sombre">◐</button>
+    </div>
+  </header>
+
+  <main class="section container">
+    <h2>Certifications & apprentissage</h2>
+    <p class="section-intro">Formations suivies et attestations obtenues en complément du BTS SIO.</p>
+    <div class="certifs" id="certifs-liste"></div>
+  </main>
+
+  <footer class="container footer">
+    <p>© <span id="year"></span> <span id="footer-nom"></span> — Portfolio BTS SIO SISR</p>
+  </footer>
+
+  <script src="data.js"></script>
+  <script src="certifs.js"></script>
+  <script>
+    const $ = (s) => document.querySelector(s);
+    const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+    // Thème clair / sombre (même réglage que la page d'accueil)
+    const root = document.documentElement;
+    let saved = null;
+    try { saved = localStorage.getItem("theme"); } catch (e) {}
+    root.dataset.theme = saved || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    $(".theme-btn").addEventListener("click", () => {
+      root.dataset.theme = root.dataset.theme === "dark" ? "light" : "dark";
+      try { localStorage.setItem("theme", root.dataset.theme); } catch (e) {}
+    });
+
+    $("#logo").textContent = `~/${PROFIL.prenom.toLowerCase()}`;
+    $("#footer-nom").textContent = `${PROFIL.prenom} ${PROFIL.nom}`;
+    $("#year").textContent = new Date().getFullYear();
+
+    const btnAttest = (url) => url ? `<a class="btn btn-sm" href="${esc(url)}" target="_blank" rel="noopener">Voir l'attestation</a>` : "";
+
+    $("#certifs-liste").innerHTML = CERTIFS.map((c) => c.modules ? `
+      <details class="card certif-dossier">
+        <summary>
+          <div class="certif-icon dossier-icon" aria-hidden="true">
+            <span class="ferme">📁</span><span class="ouvert">📂</span>
+          </div>
+          <div class="certif-body">
+            <div class="projet-meta"><span class="ctx">${esc(c.organisme)}</span><span>${c.modules.length} modules</span></div>
+            <h3>${esc(c.titre)}</h3>
+            <p>${esc(c.description)}</p>
+          </div>
+          <span class="chevron" aria-hidden="true">▾</span>
+        </summary>
+        <ul class="modules">${c.modules.map((m) => `
+          <li>
+            <div>
+              <strong>${esc(m.titre)}</strong>
+              <span class="module-meta">${esc(m.date)}${m.score ? ` · Score : ${esc(m.score)}` : ""}</span>
+            </div>
+            ${btnAttest(m.attestation)}
+          </li>`).join("")}
+        </ul>
+      </details>` : `
+      <article class="card certif">
+        <div class="certif-icon" aria-hidden="true">✓</div>
+        <div class="certif-body">
+          <div class="projet-meta"><span class="ctx">${esc(c.organisme)}</span><span>${esc(c.date || "")}</span></div>
+          <h3>${esc(c.titre)}</h3>
+          <p>${esc(c.description || "")}</p>
+          ${btnAttest(c.attestation)}
+        </div>
+      </article>`).join("");
+  </script>
+</body>
+</html>

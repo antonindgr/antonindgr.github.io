@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Portfolio — BTS SIO SISR</title>
+  <meta name="description" content="Portfolio d'étudiant en BTS SIO option SISR : réalisations en systèmes, réseaux et cybersécurité." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡️</text></svg>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="nav">
+    <div class="container nav-inner">
+      <a href="#top" class="logo" id="logo"></a>
+      <nav>
+        <button class="menu-btn" aria-label="Menu" aria-expanded="false">☰</button>
+        <ul class="nav-links">
+          <li><a href="#about">Profil</a></li>
+          <li><a href="#projets">Réalisations</a></li>
+          <li><a href="#competences">Compétences E5</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </nav>
+      <button class="theme-btn" aria-label="Changer de thème" title="Clair / sombre">◐</button>
+    </div>
+  </header>
+
+  <main id="top">
+    <!-- HERO -->
+    <section class="hero container">
+      <div class="hero-text">
+        <p class="eyebrow" id="hero-titre"></p>
+        <h1 id="hero-nom"></h1>
+        <p class="lead" id="hero-accroche"></p>
+        <p class="badge-dispo" id="hero-recherche"></p>
+        <div class="hero-cta">
+          <a class="btn primary" href="#projets">Voir mes réalisations</a>
+          <a class="btn" id="cv-btn" href="#" target="_blank" rel="noopener">Télécharger mon CV</a>
+        </div>
+      </div>
+      <div class="hero-visual" id="avatar"></div>
+    </section>
+
+    <!-- PROFIL -->
+    <section id="about" class="section container">
+      <h2>Profil</h2>
+      <div class="about-grid">
+        <div class="card">
+          <h3>Formation</h3>
+          <ul class="timeline">
+            <li><strong>BTS SIO — option SISR</strong><span id="about-ecole"></span></li>
+            <li><strong>Baccalauréat STI2D</strong><span>Option SIN — Lycée Louis Bascan, Rambouillet</span></li>
+          </ul>
+        </div>
+        <a class="card card-link" href="certifications.html">
+          <h3>Certifications & apprentissage</h3>
+          <ul class="checklist" id="certifs-apercu"></ul>
+          <span class="card-more">Voir toutes mes certifications →</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- PROJETS -->
+    <section id="projets" class="section container">
+      <h2>Réalisations professionnelles</h2>
+      <p class="section-intro">Situations professionnelles réalisées en formation, en stage et en autonomie. Cliquez sur une carte pour le détail.</p>
+      <div class="filters" id="filters"></div>
+      <div class="grid" id="projets-grid"></div>
+    </section>
+
+    <!-- TABLEAU E5 -->
+    <section id="competences" class="section container">
+      <h2>Tableau de synthèse — épreuve E5</h2>
+      <p class="section-intro">Compétences du bloc 1 « Support et mise à disposition de services informatiques » mobilisées dans chaque réalisation.</p>
+      <div class="table-wrap">
+        <table class="e5" id="e5-table"></table>
+      </div>
+      <ol class="legend" id="e5-legend"></ol>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact" class="section container">
+      <h2>Contact</h2>
+      <div class="card contact-card">
+        <p>Une question, une proposition de stage ou d'alternance ? N'hésitez pas à me contacter.</p>
+        <div class="contact-links" id="contact-links"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="container footer">
+    <p>© <span id="year"></span> <span id="footer-nom"></span> — Portfolio BTS SIO SISR · Hébergé sur GitHub Pages</p>
+  </footer>
+
+  <!-- Fenêtre de détail d'un projet -->
+  <dialog id="modal">
+    <button class="modal-close" aria-label="Fermer">✕</button>
+    <div id="modal-body"></div>
+  </dialog>
+
+  <script src="data.js"></script>
+  <script src="certifs.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
