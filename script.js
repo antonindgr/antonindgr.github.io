@@ -63,6 +63,7 @@ function renderProjets() {
     .filter(({ p }) => filtre === "Tous" || p.contexte === filtre)
     .map(({ p, i }) => `
       <button class="card projet" data-i="${i}">
+        ${p.image ? `<img class="projet-thumb" src="${esc(p.image)}" alt="" loading="lazy" onerror="this.remove()">` : ""}
         <div class="projet-meta"><span class="ctx">${esc(p.contexte)}</span><span>${esc(p.periode)}</span></div>
         <h3>${esc(p.titre)}</h3>
         <p>${esc(p.resume)}</p>
@@ -135,10 +136,26 @@ async function chargerGithub() {
     const depots = await rep.json();
     const dejaLa = new Set(PROJETS.flatMap((p) => (p.liens || []).map((l) => l.url.replace(/\/$/, "").toLowerCase())));
     const mois = ["Janv.", "Févr.", "Mars", "Avril", "Mai", "Juin", "Juil.", "Août", "Sept.", "Oct.", "Nov.", "Déc."];
-    const nouveaux = depots
+    const user = GITHUB_AUTO.utilisateur;
+    // Fichier facultatif portfolio.json à la racine du dépôt : titre, résumé, image, étapes…
+    const lireFiche = async (d) => {
+      try {
+        const r = await fetch(`https://raw.githubusercontent.com/${user}/${d.name}/${d.default_branch}/portfolio.json`);
+        return r.ok ? await r.json() : {};
+      } catch (e) { return {}; }
+    };
+    const imageDe = (d, chemin) => {
+      if (!chemin) return `https://opengraph.githubassets.com/1/${user}/${d.name}`; // image générée par GitHub
+      if (/^https?:\/\//.test(chemin)) return chemin;
+      return `https://raw.githubusercontent.com/${user}/${d.name}/${d.default_branch}/${chemin.replace(/^\.?\//, "")}`;
+    };
+    const retenus = depots
       .filter((d) => !d.fork && (d.topics || []).includes(GITHUB_AUTO.topic))
-      .filter((d) => !dejaLa.has(d.html_url.toLowerCase()))
-      .map((d) => {
+      .filter((d) => !dejaLa.has(d.html_url.toLowerCase()));
+    const fiches = await Promise.all(retenus.map(lireFiche));
+    const nouveaux = retenus
+      .map((d, n) => {
+        const fiche = fiches[n] || {};
         const date = new Date(d.created_at);
         const topics = d.topics || [];
         const estComp = (t) => /^c[1-6]$/i.test(t);
@@ -148,15 +165,17 @@ async function chargerGithub() {
         const contexte = ctxTopic ? CONTEXTES_TOPICS[ctxTopic] : "Formation";
         const competences = topics.filter(estComp).map((t) => t.toUpperCase()).sort();
         const tags = [d.language, ...topics.filter((t) => t !== GITHUB_AUTO.topic && !estComp(t) && !CONTEXTES_TOPICS[t])].filter(Boolean).slice(0, 5);
+        const nomLisible = d.name.replace(/[-_]/g, " ").replace(/^./, (c) => c.toUpperCase());
         return {
-          titre: d.name.replace(/[-_]/g, " "),
+          titre: fiche.titre || nomLisible,
           contexte,
-          periode: `${mois[date.getMonth()]} ${date.getFullYear()}`,
-          resume: d.description || "Projet publié sur GitHub.",
-          tags,
+          periode: fiche.periode || `${mois[date.getMonth()]} ${date.getFullYear()}`,
+          resume: fiche.resume || d.description || "Projet publié sur GitHub.",
+          tags: Array.isArray(fiche.tags) ? fiche.tags : tags,
           competences,
-          description: d.description || "Projet publié sur GitHub : voir le dépôt pour le détail.",
-          etapes: [],
+          image: imageDe(d, fiche.image),
+          description: fiche.description || d.description || "Projet publié sur GitHub : voir le dépôt pour le détail.",
+          etapes: Array.isArray(fiche.etapes) ? fiche.etapes : [],
           liens: [{ label: "Dépôt GitHub", url: d.html_url }],
         };
       });

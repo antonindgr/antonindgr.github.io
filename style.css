@@ -243,3 +243,11 @@ dialog::backdrop { background: rgba(5, 10, 25, .55); backdrop-filter: blur(3px);
 @media (prefers-reduced-motion: reduce) {
   .dossier-icon span, .certif-dossier .modules li, .certif-dossier summary:hover .dossier-icon { transition: none; animation: none; }
 }
+
+/* Vignette en haut des cartes de projet */
+.projet-thumb {
+  display: block; width: calc(100% + 2 * var(--thumb-bleed, 0px)); aspect-ratio: 16 / 9;
+  object-fit: cover; object-position: top left;
+  border-radius: 10px; border: 1px solid var(--border);
+  background: var(--accent-soft);
+}
